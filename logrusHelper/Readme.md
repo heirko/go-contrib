@@ -50,3 +50,4 @@ func initLogger() {
 
 ```
 
+A sample is accessible at [Heirko iris-contrib](https://github.com/heirko/iris-contrib/tree/master/middleware/logrus-logger/example).
