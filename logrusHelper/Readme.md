@@ -1,6 +1,6 @@
 # Logrus Helper
 
-A Helper arround [Logrus](https://github.com/Sirupsen/logrus) to wrap with [spf13/Viper](https://github.com/spf13/viper") to load configuration with fangs!
+A Helper arround [Logrus](https://github.com/Sirupsen/logrus) to wrap with [spf13/Viper](https://github.com/spf13/viper) to load configuration with fangs!
 
 And to simplify [Logrus](https://github.com/Sirupsen/logrus) configuration use some behavior of [Logrus_mate](https://github.com/gogap/logrus_mate)
 
@@ -8,7 +8,7 @@ And to simplify [Logrus](https://github.com/Sirupsen/logrus) configuration use s
 
 [Logrus](https://github.com/Sirupsen/logrus) is wonderful but miss some configuration helper.
 [Logrus_mate](https://github.com/gogap/logrus_mate) is powerful, but bring some unecessary pattern.
-[spf13/Viper](https://github.com/spf13/viper")  is simple, powerful and generic.
+[spf13/Viper](https://github.com/spf13/viper)  is simple, powerful and generic.
 
 ## Howto use it
 
