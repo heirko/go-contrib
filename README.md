@@ -1,5 +1,7 @@
 # go-contrib by Heirko
 
+[![Build Status](https://travis-ci.org/heirko/go-contrib.svg)](https://travis-ci.org/heirko/go-contrib) [![GoDoc](https://godoc.org/github.com/heirko/go-contrib?status.png)](https://godoc.org/github.com/heirko/go-contrib) [![Go Report Card](https://goreportcard.com/badge/github.com/heirko/go-contrib)](https://goreportcard.com/report/github.com/heirko/go-contrib)
+
 [Heirko](http://www.heirko.com) use open source software and want contribute to community.
 This repository represent some library in Golang developed by our team.
 
