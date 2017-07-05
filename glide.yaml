@@ -1,6 +1,0 @@
-package: .
-import:
-- package: github.com/Sirupsen/logrus
-  version: ^0.10.0
-- package: github.com/gogap/logrus_mate
-- package: github.com/spf13/viper

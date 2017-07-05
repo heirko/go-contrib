@@ -7,7 +7,7 @@ This repository represent some library in Golang developed by our team.
 
 ## Logrus Helper
 
-* [Logrus Helper](./logrusHelper), a helper to mixin [spf13/Viper](https://github.com/spf13/viper) and [Logrus](https://github.com/Sirupsen/logrus) to simplify configuration and fangs.
+* [Logrus Helper](./logrusHelper), a helper to mixin [spf13/Viper](https://github.com/spf13/viper) and [Logrus](https://github.com/sirupsen/logrus) to simplify configuration and fangs.
 
 You can find a sample usage in [Heirko iris-contrib](https://github.com/heirko/iris-contrib/tree/master/middleware/logrus-logger/example)
 

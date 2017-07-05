@@ -1,0 +1,21 @@
+{
+  "out": {
+    "name": "stderr",
+    "options": {}
+  },
+  "level": "error",
+  "formatter": {
+    "name": "json"
+  },
+  "hooks": [{
+    "name": "file",
+    "options": {
+      "filename": "mate.log",
+      "maxsize": 5000,
+      "maxdays": 1,
+      "rotate": true,
+      "priority": "LOG_INFO",
+      "tag": ""
+    }
+  }]
+}

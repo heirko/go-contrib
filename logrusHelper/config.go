@@ -1,11 +1,12 @@
 package logrusHelper
 
 import (
-	mate "github.com/gogap/logrus_mate"
-	"github.com/Sirupsen/logrus"
-	"github.com/spf13/viper"
 	"io"
 	"log"
+
+	mate "github.com/heralight/logrus_mate"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // UnmarshalConfiguration read configuration from viper.
@@ -17,7 +18,6 @@ func UnmarshalConfiguration(viper *viper.Viper) (conf mate.LoggerConfig) {
 	}
 	return
 }
-
 
 // SetConfig take a logrus logger instance and a conf mate.LoggerConfig.
 // then apply conf specification to logrus instance.
