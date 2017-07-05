@@ -1,4 +1,5 @@
-package logrusHelper_test
+package logrusHelper_Test
+// there is a bug in go < 1.9 with test only package and name, bug on namespace, we need to break recognition...
 
 import (
 	"testing"
