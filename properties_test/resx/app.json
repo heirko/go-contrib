@@ -1,0 +1,27 @@
+{
+  "app": {
+    "plateform": {
+      "baseurl": "http://tapp.me",
+      "baseurlapp": "http://tapp.me",
+      "locales": [
+        { "en": "http://en.tapp.me" },
+        { "fr": "http://fr.tapp.me" }
+      ]
+    }
+  },
+  "rethinkdb": {
+    "driver-port": 12345,
+    "rethinkdb.dbname":"primimo"
+  },
+  "name": "Cake",
+  "amiauth": {
+    "BaseUrl": "http://myapp.com",
+    "SuccessUrl" : "http://myapp.com/private",
+    "batter": [
+      { "type": "Regular" },
+      { "type": "Chocolate" },
+      { "type": "Blueberry" },
+      { "type": "Devil's Food" }
+    ]
+  }
+}

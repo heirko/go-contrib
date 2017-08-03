@@ -15,3 +15,9 @@ Have fun and follow us on [Facebook](https://www.facebook.com/heirkobook)
 Check or new product [Primimo](http://primimo.com) !
 
 
+## Properties
+ 
+A Properites / configuration app helper, 
+Properties accessor that wrap Viper. Easier app configuration.
+
+[Read more](./properties)
