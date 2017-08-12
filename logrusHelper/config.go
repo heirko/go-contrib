@@ -16,6 +16,9 @@ func UnmarshalConfiguration(viper *viper.Viper) (conf mate.LoggerConfig) {
 	if err != nil {
 		log.Fatalf("unable to decode into struct, %v", err)
 	}
+	if err = conf.Validate(); err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -52,7 +55,7 @@ func SetConfig(logger *logrus.Logger, conf mate.LoggerConfig) (err error) {
 		for _, hookConf := range conf.Hooks {
 			var hook logrus.Hook
 			if hook, err = mate.NewHook(hookConf.Name, hookConf.Options); err != nil {
-				return
+				panic(err)
 			}
 			logger.Hooks.Add(hook)
 		}
