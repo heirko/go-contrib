@@ -1,5 +1,7 @@
 # Properties Module
 
+[![GoDoc](https://godoc.org/github.com/heirko/go-contrib/properties?status.png)](https://godoc.org/github.com/heirko/go-contrib)
+
 A centralized configuration endpoint.
 
 ## Why ?

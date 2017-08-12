@@ -112,6 +112,16 @@ func (p Properties) GetOrDie(key string) interface{} {
 	return nil
 }
 
+// GetOrDie get key, if not found panic
+func (p Properties) GetSubOrDie(key string) *viper.Viper {
+	if v := p.Sub(key); v == nil {
+		log.Panicf("Required sub properties \"%s\" are not found!!", key)
+	} else {
+		return v
+	}
+	return nil
+}
+
 // GetStringOrDefault get string or a default value
 func (p Properties) GetStringOrDefault(key string, dlft string) string {
 	if v := p.GetString(key); v == "" {
@@ -169,7 +179,7 @@ func GetSimpleProperties() *Properties {
 	return props
 }
 
-// Helper to Load Properties and merge it with mode related Properties
+// DefaultLoadModeProperties is an Helper to Load Properties and merge it with mode related Properties
 // defaultPath will be use by default if user not provide a ConfigDirTag in command line
 func DefaultLoadModeProperties(defaultPath string) *Properties {
 	return LoadModeProperties(defaultPath, DefaultConfigMode, GetDefaultModeProperties(), true)
