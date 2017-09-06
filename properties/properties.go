@@ -3,9 +3,6 @@ package properties
 import (
 	"log"
 
-	"bytes"
-
-	"github.com/spf13/afero"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
@@ -24,18 +21,11 @@ func New(config ...Config) *Properties {
 	var c Config
 
 	if len(config) == 0 {
-		c = Config{}
+		c = NewConfig()
 	} else {
 		c = config[0]
 	}
-
-	if c.ConfigName == "" {
-		c.ConfigName = DefaultConfigName
-	}
-
-	if c.ConfigType == "" {
-		c.ConfigType = DefaultConfigType
-	}
+	c.InitConfig()
 
 	prop := Properties{Config: c, Viper: viper.New()}
 	prop.init()
@@ -156,33 +146,34 @@ func (p Properties) TryLoadRemoteProperties() {
 // GetDefaultModeProperties get A Default Property set for classic app based on Flag with
 // Config file : app.json in current directory from Flag
 // With HOME and PWD from env
-func GetDefaultModeProperties() *Properties {
-	props := New(Config{
-		EnvVars: []string{"HOME", "PWD"},
-		Flags: []Flag{
-			{ModeTag, "", "Execution mode: 'dev' or 'prod' or 'test'"},
-			{ConfigDirTag, "", "Configuration directory"},
-			{ConfigNameTag, "app", "Configuration name without extension"},
-			{ConfigTypeTag, "json", "Configuration type, e.g.: json, yaml,..."},
-		},
-	})
+func (c Config) GetDefaultModeProperties() *Properties {
+	props := New(c)
 	return props
 }
 
-// A Base Property set for quick init with
-// Config file : app.json in current directory from Properties (no flag listener)
-func GetSimpleProperties() *Properties {
-	props := New(Config{})
-	props.Set(ConfigDirTag, DefaultConfigDir)
-	props.Set(ConfigNameTag, DefaultConfigName)
-	props.Set(ConfigTypeTag, DefaultConfigType)
-	return props
-}
+// // A Base Property set for quick init with
+// // Config file : app.json in current directory from Properties (no flag listener)
+// func (c Config) GetSimpleProperties() *Properties {
+// 	props := New(c)
+// 	props.Set(ConfigDirTag, DefaultConfigDir)
+// 	props.Set(ConfigNameTag, DefaultConfigName)
+// 	props.Set(ConfigTypeTag, DefaultConfigType)
+// 	return props
+// }
 
 // DefaultLoadModeProperties is an Helper to Load Properties and merge it with mode related Properties
 // defaultPath will be use by default if user not provide a ConfigDirTag in command line
-func DefaultLoadModeProperties(defaultPath string) *Properties {
-	return LoadModeProperties(defaultPath, DefaultConfigMode, GetDefaultModeProperties(), true)
+// func DefaultLoadModeProperties(defaultPath string) *Properties {
+// 	return LoadModeProperties(defaultPath, DefaultConfigMode, GetDefaultModeProperties(), true)
+// }
+
+// CheckRunInTestEnvironment return true if this application is running with 'go test'
+func CheckRunInTestEnvironment() bool {
+	if pflag.Lookup("test.v") == nil {
+		return false
+	} else {
+		return true
+	}
 }
 
 // Helper to Load Properties and merge it with mode related Properties
@@ -190,41 +181,63 @@ func DefaultLoadModeProperties(defaultPath string) *Properties {
 // defaultMode will be use by default if user not provide a ModeTag in command line
 // props is used as properties base.
 // panicOnModeLoad if true, when loading mode properties failed call "panic" otherwise "warning"
-func LoadModeProperties(defaultPath string, defaultMode string, props *Properties, panicOnModeLoad bool) *Properties {
+func (props *Properties) LoadModeProperties(panicOnModeLoad bool) *Properties {
 
-	var configName = props.GetStringOrDefault(ConfigNameTag, DefaultConfigName)
-	var configDir = props.GetStringOrDefault(ConfigDirTag, defaultPath)
-	var configType = props.GetStringOrDefault(ConfigTypeTag, DefaultConfigType)
+	var configName = props.GetStringOrDefault(ConfigNameTag, props.Config.ConfigName)
+	//var configDir = props.GetStringOrDefault(ConfigDirTag, props.Config.DefaultConfigDir)
+	var configType = props.GetStringOrDefault(ConfigTypeTag, props.Config.ConfigType)
 
 	props.SetConfigType(configType)
-	props.AddConfigPath(configDir)
-	props.SetConfigName(configName)
-	err := props.ReadInConfig() // Find and read the config file
-	if err != nil {
-		// Handle errors reading the config file
-		log.Panicf("Fatal error config file %s.%s in %s : %s \n", configName, configType, configDir, err)
-	}
-
-	var modeStr = props.GetStringOrDefault(ModeTag, defaultMode)
+	//props.AddConfigPath(configDir)
+	var modeStr = props.GetString(ModeTag)
 	if modeStr == "" {
-		log.Panic("Mode is not set !")
+		if isInTest := CheckRunInTestEnvironment(); isInTest == true {
+			modeStr = props.Config.TestModeTag
+		} else {
+			modeStr = props.Config.DefaultConfigMode
+		}
+		if modeStr == "" {
+			log.Panic("Mode is not set !")
+		}
 	}
 
-	var modeConfigFilePath = configDir + "/" + modeStr + "." + configName + "." + configType
-	file, err := afero.ReadFile(afero.NewOsFs(), modeConfigFilePath)
+	modeConfigName := modeStr + "." + configName
+	props.SetConfigName(modeConfigName)
+
+	err := props.MergeInConfig() // Find and read the config file
 	if err != nil {
 		if panicOnModeLoad {
-			log.Panicf("Fatal error reading mode file %s : %s \n", modeConfigFilePath, err)
+			log.Panicf("Fatal error config mode %s : %s \n", modeConfigName, err)
 		} else {
-			log.Printf("Error reading mode file %s : %s \n", modeConfigFilePath, err)
+			log.Printf("Fatal error config mode %s : %s \n", modeConfigName, err)
 			return props
 		}
 	}
 
-	err = props.MergeConfig(bytes.NewReader(file))
-	if err != nil {
-		log.Panicf("Fatal error merging mode file %s : %s \n", modeConfigFilePath, err)
-	}
+	// var modeStr = props.GetString(ModeTag, defaultMode)
+	// if modeStr == "" {
+	// 	if isInTest := CheckRunInTestEnvironment(); isInTest == true {
+	// 		modeStr = isInTest
+	// 	} else {
+	// 		log.Panic("Mode is not set !")
+	// 	}
+	// }
+
+	// var modeConfigFilePath = configDir + "/" + modeStr + "." + configName + "." + configType
+	// file, err := afero.ReadFile(afero.NewOsFs(), modeConfigFilePath)
+	// if err != nil {
+	// 	if panicOnModeLoad {
+	// 		log.Panicf("Fatal error reading mode file %s : %s \n", modeConfigFilePath, err)
+	// 	} else {
+	// 		log.Printf("Error reading mode file %s : %s \n", modeConfigFilePath, err)
+	// 		return props
+	// 	}
+	// }
+
+	// err = props.MergeConfig(bytes.NewReader(file))
+	// if err != nil {
+	// 	log.Panicf("Fatal error merging mode file %s : %s \n", modeConfigFilePath, err)
+	// }
 	return props
 
 }

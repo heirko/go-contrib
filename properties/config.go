@@ -12,6 +12,8 @@ const (
 
 	// Default config mode
 	DefaultConfigMode = "prod"
+	// Default test config mode spelling
+	DefaultTestModeTag = "test"
 )
 
 // Flags Tag referrer
@@ -48,11 +50,55 @@ type Config struct {
 
 	// Define the flags to lookup for
 	Flags []Flag
+
+	// Overridable Mode Tag to use for test session by default set to DefaultTestModeTag
+	TestModeTag string
+
+	// Overridable default mode
+	DefaultConfigMode string
 }
 
-func NewConfig() *Config {
-	return &Config{
-		ConfigType: DefaultConfigType, ConfigName: DefaultConfigName}
+func NewConfig() Config {
+	return Config{
+		ConfigType:        DefaultConfigType,
+		ConfigName:        DefaultConfigName,
+		TestModeTag:       DefaultTestModeTag,
+		DefaultConfigMode: DefaultConfigMode,
+	}
+}
+
+// DefaultConfig return a default configuration with Flags and Env already set...
+func DefaultConfig() (c Config) {
+	c = Config{
+		EnvVars: []string{"HOME", "PWD"},
+		Flags: []Flag{
+			{ModeTag, "", "Execution mode: 'dev' or 'prod' or 'test'"},
+			{ConfigDirTag, "", "Configuration directory"},
+			{ConfigNameTag, "app", "Configuration name without extension"},
+			{ConfigTypeTag, "json", "Configuration type, e.g.: json, yaml,..."},
+		},
+	}
+	c.InitConfig()
+	return
+}
+
+// InitConfig init config with default value if not set
+func (c Config) InitConfig() {
+
+	if c.ConfigName == "" {
+		c.ConfigName = DefaultConfigName
+	}
+
+	if c.ConfigType == "" {
+		c.ConfigType = DefaultConfigType
+	}
+	if c.TestModeTag == "" {
+		c.TestModeTag = DefaultTestModeTag
+	}
+
+	if c.DefaultConfigMode == "" {
+		c.DefaultConfigMode = DefaultConfigMode
+	}
 }
 
 // Privider is a struct that hold remote providers data
