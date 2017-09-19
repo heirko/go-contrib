@@ -25,3 +25,7 @@ _testmain.go
 
 vendor
 **/main
+
+**/mate.log
+.idea
+fixhist.sh

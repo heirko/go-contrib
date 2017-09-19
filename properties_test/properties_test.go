@@ -34,7 +34,7 @@ func TestModeLoadConfigPanic(t *testing.T) {
 		c := properties.NewConfig()
 		c.ConfigPathes = []string{"./resx"}
 		c.DefaultConfigMode = ""
-		properties.New(c).LoadModeProperties(false)
+		properties.New(c).LoadModeProperties(true)
 	},
 		"Mode not set and should throw a panic")
 

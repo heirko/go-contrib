@@ -22,13 +22,19 @@ To read Mode from command line and by default "prod", where resx is configuratio
 app.json and prod.app.json (or any profile as command line argument) will be merge.
 
 '''
-props := properties.DefaultLoadModeProperties("./resx")
+	// Create a configuration Object with default Env and flags
+	c := properties.DefaultConfig()
+	// customize some default value
+	c.ConfigPathes = []string{"common/configs/server"}
+	c.DefaultConfigMode = "production" // here a production.app.json will be search instead of prod.app.json
+
+	// Read flags, env, remote... and load properties
+	props := properties.New(c)
+	// load and merge mode properties
+	props.LoadModeProperties(true)
+
 '''
 
-To have more control and keep mode manager:
-'''
-props := properties.LoadModeProperties("./resx", "test", properties.GetSimpleProperties(), true)
-'''
 
 Can be use to unmarshal any configuration from [spf13/Viper](https://github.com/spf13/viper):
 

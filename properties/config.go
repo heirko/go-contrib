@@ -83,8 +83,7 @@ func DefaultConfig() (c Config) {
 }
 
 // InitConfig init config with default value if not set
-func (c Config) InitConfig() {
-
+func (c *Config) InitConfig() {
 	if c.ConfigName == "" {
 		c.ConfigName = DefaultConfigName
 	}
@@ -99,6 +98,7 @@ func (c Config) InitConfig() {
 	if c.DefaultConfigMode == "" {
 		c.DefaultConfigMode = DefaultConfigMode
 	}
+	return
 }
 
 // Privider is a struct that hold remote providers data

@@ -38,18 +38,35 @@ func (p Properties) init() {
 
 	//gives an instance of viper to Properties instance
 
+	//Bind flags
+	if p.Config.Flags != nil && len(p.Config.Flags) > 0 {
+		for _, flag := range p.Config.Flags {
+			pflag.String(flag.Name, flag.Default, flag.Usage)
+			p.Viper.BindPFlag(flag.Name, pflag.Lookup(flag.Name))
+		}
+		pflag.Parse()
+	}
+
+	//Bind Env vars :
+	if p.Config.EnvVars != nil && len(p.Config.EnvVars) > 0 {
+		for _, envVar := range p.Config.EnvVars {
+			p.Viper.BindEnv(envVar)
+		}
+	}
+
 	//Set config file name
+	var configName = p.GetStringOrDefault(ConfigNameTag, p.Config.ConfigName)
+	var configType = p.GetStringOrDefault(ConfigTypeTag, p.Config.ConfigType)
 
-	if p.Config.ConfigName != "" {
-		p.Viper.SetConfigName(p.Config.ConfigName)
+	p.Viper.SetConfigName(configName)
+	p.Viper.SetConfigType(configType)
+
+	//set the lookup pathes for config files from overloading flags and env
+	var configDir = p.GetStringOrDefault(ConfigDirTag, "")
+	if configDir != "" {
+		p.Config.ConfigPathes = []string{configDir}
 	}
 
-	//set config file type for remote K/V stores
-	if p.Config.ConfigType != "" {
-		p.Viper.SetConfigType(p.Config.ConfigType)
-	}
-
-	//set the lookup pathes for config files
 	if p.Config.ConfigPathes != nil && len(p.Config.ConfigPathes) > 0 {
 		for _, path := range p.Config.ConfigPathes {
 			p.Viper.AddConfigPath(path)
@@ -57,13 +74,6 @@ func (p Properties) init() {
 		err := p.Viper.ReadInConfig()
 		if err != nil {
 			log.Panic(err)
-		}
-	}
-
-	//Bind Env vars :
-	if p.Config.EnvVars != nil && len(p.Config.EnvVars) > 0 {
-		for _, envVar := range p.Config.EnvVars {
-			p.Viper.BindEnv(envVar)
 		}
 	}
 
@@ -82,14 +92,6 @@ func (p Properties) init() {
 		}
 	}
 
-	//Bind flags
-	if p.Config.Flags != nil && len(p.Config.Flags) > 0 {
-		for _, flag := range p.Config.Flags {
-			pflag.String(flag.Name, flag.Default, flag.Usage)
-			p.Viper.BindPFlag(flag.Name, pflag.Lookup(flag.Name))
-		}
-		pflag.Parse()
-	}
 }
 
 // GetOrDie get key, if not found panic
