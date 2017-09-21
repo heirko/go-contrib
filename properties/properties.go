@@ -184,7 +184,7 @@ func (props *Properties) LoadModeProperties(panicOnModeLoad bool) *Properties {
 			log.Panic("Mode is not set !")
 		}
 	}
-
+	props.Set(ModeTag, modeStr)
 	modeConfigName := modeStr + "." + configName
 	props.SetConfigName(modeConfigName)
 
