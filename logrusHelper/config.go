@@ -22,6 +22,20 @@ func UnmarshalConfiguration(viper *viper.Viper) (conf mate.LoggerConfig) {
 	return
 }
 
+// UnmarshalConfigurationByKey read configuration from viper by a category key.
+//  e.g., if you have all your logging properties under a common key logging
+// It returns a logrus_mate logger configuration instance.
+func UnmarshalConfigurationByKey(key string, viper *viper.Viper) (conf mate.LoggerConfig) {
+	err := viper.UnmarshalKey(key, &conf)
+	if err != nil {
+		log.Fatalf("unable to decode into struct, %v", err)
+	}
+	if err = conf.Validate(); err != nil {
+		panic(err)
+	}
+	return
+}
+
 // SetConfig take a logrus logger instance and a conf mate.LoggerConfig.
 // then apply conf specification to logrus instance.
 // It returns an error if failed.
